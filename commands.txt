@@ -1,0 +1,53 @@
+# SSH Brute-Force Detection Lab – Commands List
+
+# 1. Update system and install OpenSSH server
+sudo apt update
+sudo apt install openssh-server -y
+
+# 2. Enable and start SSH service
+sudo systemctl enable ssh
+sudo systemctl start ssh
+sudo systemctl status ssh  # Verify SSH service
+
+# 3. Install Fail2Ban
+sudo apt install fail2ban -y
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+sudo systemctl status fail2ban  # Verify Fail2Ban service
+
+# 4. Simulate SSH brute-force login attempts
+ssh fakeuser@localhost  # Enter wrong password multiple times
+ssh fakeuser@localhost  # Repeat as needed
+
+# 5. Monitor authentication logs in real-time
+sudo journalctl -u ssh -f
+
+# 6. Edit Fail2Ban configuration for SSH
+sudo nano /etc/fail2ban/jail.local
+# Example configuration:
+# [sshd]
+# enabled = true
+# port = ssh
+# maxretry = 5
+# bantime = 600
+# findtime = 600
+
+# 7. Restart Fail2Ban to apply changes
+sudo systemctl restart fail2ban
+
+# 8. Check Fail2Ban status for SSH jail
+sudo fail2ban-client status sshd
+
+# 9. Verify banned IPs and firewall rules
+sudo iptables -L
+
+# 10. (Optional) Harden SSH server configuration
+sudo nano /etc/ssh/sshd_config
+# Recommended settings:
+# PermitRootLogin no
+# PasswordAuthentication yes
+# MaxAuthTries 5
+
+# 11. Restart SSH service to apply changes
+sudo systemctl restart ssh
+sudo systemctl status ssh  # Verify SSH service after hardening
